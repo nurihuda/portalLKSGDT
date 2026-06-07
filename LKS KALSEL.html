@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal LKS GDT</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"DM Sans"', 'sans-serif'] },
+                }
+            }
+        }
+    </script>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: #f3f4f6;
+            overflow-y: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Custom Webkit Scrollbar */
+        .app-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .app-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .app-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .app-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* Brand Classes */
+        .brand-red {
+            background-color: #EE414B !important;
+            color: white;
+        }
+        
+        .brand-red-text {
+            color: #EE414B !important;
+        }
+
+        /* Blinking Animation for Active Event */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+        .animate-blink {
+            animation: blink 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- SVG ICON COMPONENTS ---
+        const IconHome = () => (<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>);
+        const IconLock = () => (<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>);
+        const IconUnlock = () => (<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>);
+        const IconUpload = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>);
+        const IconFileText = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><line x1="10" x2="8" y1="9" y2="9"/></svg>);
+        const IconCalendar = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>);
+        const IconDatabase = () => (<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>);
+        const IconLink = () => (<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>);
+
+        // --- MAIN APP COMPONENT ---
+        const App = () => {
+            const [currentView, setCurrentView] = React.useState('dashboard');
+            const [currentTime, setCurrentTime] = React.useState(new Date());
+            const [loading, setLoading] = React.useState(true);
+            const [data, setData] = React.useState({
+                headline: 'Portal Kompetisi LKS',
+                docLink: '#',
+                submissionLink: '#',
+                modules: [],
+                schedule: []
+            });
+
+            // Timer for Real-Time Clock & Countdown
+            React.useEffect(() => {
+                const timer = setInterval(() => setCurrentTime(new Date()), 1000);
+                return () => clearInterval(timer);
+            }, []);
+
+            // Data Fetching Logic (PapaParse)
+            React.useEffect(() => {
+                const CSV_URL = 'https://docs.google.com/spreadsheets/d/11qcWvcW1Ch75StKNNy0otv3Bx15M8bz8kHN-AkTm6LA/export?format=csv&gid=1286344819';
+                
+                Papa.parse(CSV_URL, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        const rows = results.data;
+                        let parsedData = { headline: '', docLink: '', submissionLink: '', modules: [], schedule: [] };
+
+                        rows.forEach(row => {
+                            const { Kategori, Judul_Kegiatan, Waktu_Mulai, Waktu_Selesai, Link_Url } = row;
+                            
+                            if (Kategori === 'Pengaturan') {
+                                if (Judul_Kegiatan.toLowerCase().includes('headline')) parsedData.headline = Link_Url;
+                                if (Judul_Kegiatan.toLowerCase().includes('dokumentasi')) parsedData.docLink = Link_Url;
+                                if (Judul_Kegiatan.toLowerCase().includes('pengumpulan')) parsedData.submissionLink = Link_Url;
+                            } 
+                            else if (Kategori === 'Modul') {
+                                parsedData.modules.push({
+                                    id: Math.random().toString(36).substr(2, 9),
+                                    title: Judul_Kegiatan,
+                                    releaseTime: new Date(Waktu_Mulai),
+                                    link: Link_Url
+                                });
+                            } 
+                            else if (Kategori === 'Jadwal') {
+                                parsedData.schedule.push({
+                                    id: Math.random().toString(36).substr(2, 9),
+                                    title: Judul_Kegiatan,
+                                    startTime: new Date(Waktu_Mulai),
+                                    endTime: new Date(Waktu_Selesai),
+                                    dateString: Waktu_Mulai ? Waktu_Mulai.split(' ')[0] : ''
+                                });
+                            }
+                        });
+
+                        // Sort Schedule chronologically
+                        parsedData.schedule.sort((a, b) => a.startTime - b.startTime);
+                        
+                        // Fallbacks if Google Sheets lacks specific Settings
+                        if (!parsedData.headline) parsedData.headline = 'PORTAL RESMI LKS GDT';
+                        
+                        setData(parsedData);
+                        setLoading(false);
+                    },
+                    error: (err) => {
+                        console.error('Error fetching CSV:', err);
+                        setLoading(false); // Failsafe
+                    }
+                });
+            }, []);
+
+            // --- HELPER LOGIC ---
+            const getActiveOrNextEvent = () => {
+                let activeEvent = null;
+                let nextEvent = null;
+
+                for (let s of data.schedule) {
+                    if (currentTime >= s.startTime && currentTime <= s.endTime) {
+                        activeEvent = s;
+                        break;
+                    } else if (currentTime < s.startTime && !nextEvent) {
+                        nextEvent = s;
+                    }
+                }
+                return { activeEvent, nextEvent };
+            };
+
+            const getCountdown = (targetDate) => {
+                const diff = targetDate ? targetDate.getTime() - currentTime.getTime() : 0;
+                if (diff <= 0) return { h: '00', m: '00', s: '00' };
+
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                const mins = Math.floor((diff / 1000 / 60) % 60);
+                const secs = Math.floor((diff / 1000) % 60);
+
+                return {
+                    h: String(hours).padStart(2, '0'),
+                    m: String(mins).padStart(2, '0'),
+                    s: String(secs).padStart(2, '0')
+                };
+            };
+
+            const { activeEvent, nextEvent } = getActiveOrNextEvent();
+            const targetCountdownTime = activeEvent ? activeEvent.endTime : (nextEvent ? nextEvent.startTime : null);
+            const countdown = getCountdown(targetCountdownTime);
+
+            // Group Schedules by Date
+            const groupedSchedules = data.schedule.reduce((acc, curr) => {
+                if (!acc[curr.dateString]) acc[curr.dateString] = [];
+                acc[curr.dateString].push(curr);
+                return acc;
+            }, {});
+
+            // --- SUB-COMPONENTS ---
+            const LoadingScreen = () => (
+                <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                    <div className="w-12 h-12 border-4 border-gray-200 border-t-[#EE414B] rounded-full animate-spin mb-4"></div>
+                    <p className="font-medium animate-pulse">Menghubungkan ke Pusat Data...</p>
+                </div>
+            );
+
+            const Dashboard = () => (
+                <div className="space-y-10 animate-fade-in pb-10">
+                    {/* Headline & Countdown Section */}
+                    <div className="text-center space-y-6">
+                        <h1 className="text-4xl md:text-6xl font-bold text-gray-900 tracking-tight drop-shadow-sm uppercase">
+                            {data.headline}
+                        </h1>
+                        
+                        <div className="flex flex-col items-center justify-center space-y-4">
+                            {/* Status Badge */}
+                            {activeEvent ? (
+                                <div className="inline-flex items-center px-4 py-2 bg-green-100 text-green-700 rounded-full font-bold shadow-sm border border-green-200 animate-blink">
+                                    <span className="w-2.5 h-2.5 bg-green-500 rounded-full mr-2"></span>
+                                    SEDANG BERLANGSUNG: {activeEvent.title}
+                                </div>
+                            ) : nextEvent ? (
+                                <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-bold shadow-sm border border-blue-200">
+                                    <IconCalendar className="w-4 h-4 mr-2" />
+                                    Agenda Berikutnya: {nextEvent.title}
+                                </div>
+                            ) : (
+                                <div className="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-full font-bold shadow-sm border border-gray-200">
+                                    Semua Agenda Selesai
+                                </div>
+                            )}
+
+                            {/* Giant Countdown Timer */}
+                            <div className="flex space-x-3 md:space-x-4 items-center">
+                                <div className="flex flex-col items-center">
+                                    <div className="w-20 h-24 md:w-32 md:h-36 bg-gray-900 text-white rounded-xl shadow-xl flex items-center justify-center text-4xl md:text-7xl font-bold tracking-widest border border-gray-800">
+                                        {countdown.h}
+                                    </div>
+                                    <span className="text-xs md:text-sm text-gray-500 font-bold mt-2 uppercase tracking-wide">Jam</span>
+                                </div>
+                                <span className="text-3xl md:text-6xl font-bold text-gray-400 pb-6">:</span>
+                                <div className="flex flex-col items-center">
+                                    <div className="w-20 h-24 md:w-32 md:h-36 brand-red rounded-xl shadow-xl flex items-center justify-center text-4xl md:text-7xl font-bold tracking-widest border border-red-500">
+                                        {countdown.m}
+                                    </div>
+                                    <span className="text-xs md:text-sm brand-red-text font-bold mt-2 uppercase tracking-wide">Menit</span>
+                                </div>
+                                <span className="text-3xl md:text-6xl font-bold text-gray-400 pb-6">:</span>
+                                <div className="flex flex-col items-center">
+                                    <div className="w-20 h-24 md:w-32 md:h-36 bg-gray-900 text-white rounded-xl shadow-xl flex items-center justify-center text-4xl md:text-7xl font-bold tracking-widest border border-gray-800">
+                                        {countdown.s}
+                                    </div>
+                                    <span className="text-xs md:text-sm text-gray-500 font-bold mt-2 uppercase tracking-wide">Detik</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Menu Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                        <button onClick={() => setCurrentView('modules')} className="flex items-center p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 group text-left border border-gray-100 hover:border-red-100">
+                            <div className="p-4 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <IconDatabase />
+                            </div>
+                            <div className="ml-5">
+                                <h3 className="text-xl font-bold text-gray-900">Akses Modul</h3>
+                                <p className="text-gray-500 text-sm mt-1">Buka dan unduh berkas lomba.</p>
+                            </div>
+                        </button>
+                        
+                        <button onClick={() => setCurrentView('schedule')} className="flex items-center p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 group text-left border border-gray-100 hover:border-red-100">
+                            <div className="p-4 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <IconCalendar />
+                            </div>
+                            <div className="ml-5">
+                                <h3 className="text-xl font-bold text-gray-900">Jadwal Kompetisi</h3>
+                                <p className="text-gray-500 text-sm mt-1">Lihat timeline dan alur acara.</p>
+                            </div>
+                        </button>
+
+                        <a href={data.submissionLink} target="_blank" rel="noreferrer" className="flex items-center p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 group border border-gray-100 hover:border-red-100">
+                            <div className="p-4 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <IconUpload />
+                            </div>
+                            <div className="ml-5">
+                                <h3 className="text-xl font-bold text-gray-900">Link Pengumpulan</h3>
+                                <p className="text-gray-500 text-sm mt-1">Akses folder Google Drive peserta.</p>
+                            </div>
+                        </a>
+
+                        <a href={data.docLink} target="_blank" rel="noreferrer" className="flex items-center p-6 bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-200 group border border-gray-100 hover:border-red-100">
+                            <div className="p-4 bg-red-50 text-red-500 rounded-xl group-hover:bg-red-500 group-hover:text-white transition-colors">
+                                <IconFileText />
+                            </div>
+                            <div className="ml-5">
+                                <h3 className="text-xl font-bold text-gray-900">Dokumentasi & Kisi-kisi</h3>
+                                <p className="text-gray-500 text-sm mt-1">Unduh aturan dan referensi teknis.</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    {/* Submission Info Box */}
+                    <div className="max-w-4xl mx-auto mt-8 bg-red-50 border-2 border-dashed border-red-300 rounded-2xl p-6 text-center shadow-sm">
+                        <h4 className="text-lg font-bold text-red-800 mb-2">Instruksi Pengumpulan Hasil Karya</h4>
+                        <p className="text-red-700 text-sm md:text-base">
+                            Klik <strong>Link Pengumpulan</strong> di atas atau buka "Shared With Me / Dibagikan kepada saya" di Google Drive Anda. 
+                            Temukan folder dengan format <strong className="bg-red-200 px-2 py-1 rounded mx-1">00_Nama Peserta</strong> dan unggah seluruh file akhir ke dalam folder tersebut sesuai instruksi modul.
+                        </p>
+                    </div>
+                </div>
+            );
+
+            const ModulesView = () => (
+                <div className="max-w-4xl mx-auto space-y-6 pb-10">
+                    <div className="flex items-center justify-between mb-8 border-b pb-4 border-gray-200">
+                        <h2 className="text-3xl font-bold text-gray-900">Daftar Modul</h2>
+                        <button onClick={() => setCurrentView('dashboard')} className="text-gray-500 hover:text-gray-900 text-sm font-medium flex items-center">
+                            ← Kembali
+                        </button>
+                    </div>
+                    
+                    {data.modules.length === 0 ? (
+                        <p className="text-center text-gray-500 italic py-10">Belum ada modul yang tersedia.</p>
+                    ) : (
+                        <div className="grid gap-4">
+                            {data.modules.map(mod => {
+                                const isUnlocked = currentTime >= mod.releaseTime;
+                                return (
+                                    <div key={mod.id} className={`p-6 rounded-2xl border ${isUnlocked ? 'bg-white border-gray-200 shadow-md' : 'bg-gray-50 border-gray-100 text-gray-400'} flex flex-col md:flex-row items-start md:items-center justify-between gap-4 transition-all`}>
+                                        <div className="flex items-start gap-4">
+                                            <div className={`mt-1 p-3 rounded-full ${isUnlocked ? 'bg-red-100 text-red-600' : 'bg-gray-200 text-gray-500'}`}>
+                                                {isUnlocked ? <IconUnlock /> : <IconLock />}
+                                            </div>
+                                            <div>
+                                                <h3 className={`text-xl font-bold ${isUnlocked ? 'text-gray-900' : 'text-gray-500'}`}>{mod.title}</h3>
+                                                <p className="text-sm mt-1 flex items-center gap-1">
+                                                    <IconCalendar className="w-4 h-4" /> 
+                                                    Jadwal Rilis: {mod.releaseTime.toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'short' })} WIB
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            {isUnlocked ? (
+                                                <a href={mod.link} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center px-6 py-3 brand-red rounded-xl font-bold hover:bg-red-600 shadow-lg hover:shadow-red-500/30 transition-all w-full md:w-auto">
+                                                    Buka Modul <IconLink className="ml-2 w-4 h-4" />
+                                                </a>
+                                            ) : (
+                                                <button disabled className="inline-flex items-center justify-center px-6 py-3 bg-gray-200 text-gray-500 rounded-xl font-bold cursor-not-allowed w-full md:w-auto">
+                                                    Terkunci
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    )}
+                </div>
+            );
+
+            const ScheduleView = () => (
+                <div className="max-w-4xl mx-auto space-y-8 pb-10">
+                    <div className="flex items-center justify-between mb-8 border-b pb-4 border-gray-200">
+                        <h2 className="text-3xl font-bold text-gray-900">Jadwal Kompetisi</h2>
+                        <button onClick={() => setCurrentView('dashboard')} className="text-gray-500 hover:text-gray-900 text-sm font-medium flex items-center">
+                            ← Kembali
+                        </button>
+                    </div>
+
+                    {Object.keys(groupedSchedules).length === 0 ? (
+                        <p className="text-center text-gray-500 italic py-10">Jadwal belum tersedia.</p>
+                    ) : (
+                        Object.entries(groupedSchedules).map(([dateStr, items]) => {
+                            // Formatting date string nicely
+                            const dateObj = new Date(dateStr);
+                            const formattedDate = isNaN(dateObj) ? dateStr : dateObj.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                            return (
+                                <div key={dateStr} className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                                    <div className="bg-gray-50 px-6 py-4 border-b border-gray-100">
+                                        <h3 className="text-lg font-bold text-gray-800 flex items-center">
+                                            <IconCalendar className="w-5 h-5 mr-2 text-red-500" /> {formattedDate}
+                                        </h3>
+                                    </div>
+                                    <div className="divide-y divide-gray-50">
+                                        {items.map((item) => {
+                                            const isActive = currentTime >= item.startTime && currentTime <= item.endTime;
+                                            const isPast = currentTime > item.endTime;
+                                            
+                                            const formatTime = (d) => d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+                                            return (
+                                                <div key={item.id} className={`px-6 py-4 flex flex-col md:flex-row md:items-center gap-4 hover:bg-gray-50 transition-colors ${isActive ? 'bg-red-50/50' : ''}`}>
+                                                    <div className="w-40 flex-shrink-0 text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1 rounded-md text-center">
+                                                        {formatTime(item.startTime)} - {formatTime(item.endTime)}
+                                                    </div>
+                                                    <div className="flex-grow">
+                                                        <h4 className={`text-base font-bold ${isActive ? 'text-red-600' : isPast ? 'text-gray-400' : 'text-gray-900'}`}>
+                                                            {item.title}
+                                                        </h4>
+                                                    </div>
+                                                    {isActive && (
+                                                        <div className="flex-shrink-0 text-xs font-bold bg-green-100 text-green-700 px-2 py-1 rounded-full animate-pulse border border-green-200">
+                                                            Berlangsung
+                                                        </div>
+                                                    )}
+                                                    {isPast && (
+                                                        <div className="flex-shrink-0 text-xs font-bold bg-gray-100 text-gray-500 px-2 py-1 rounded-full">
+                                                            Selesai
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            )
+                        })
+                    )}
+                </div>
+            );
+
+            // --- MAIN RENDER ---
+            return (
+                <div className="h-screen overflow-y-auto app-container flex flex-col">
+                    {/* Header Sticky */}
+                    <header className="sticky top-0 z-50 brand-red shadow-lg">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+                            <div className="font-extrabold text-xl tracking-tight cursor-pointer" onClick={() => setCurrentView('dashboard')}>
+                                gdtlab.id
+                            </div>
+                            <button 
+                                onClick={() => setCurrentView('dashboard')}
+                                className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+                                title="Home"
+                            >
+                                <IconHome />
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* Main Content Area */}
+                    <main className="flex-grow px-4 sm:px-6 lg:px-8 pt-8 md:pt-12">
+                        {loading ? <LoadingScreen /> : (
+                            <React.Fragment>
+                                {currentView === 'dashboard' && <Dashboard />}
+                                {currentView === 'modules' && <ModulesView />}
+                                {currentView === 'schedule' && <ScheduleView />}
+                            </React.Fragment>
+                        )}
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
