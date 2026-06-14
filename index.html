@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Utama Kompetisi LKS</title>
     
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg id='Layer_2' data-name='Layer 2' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 305.3 305.3'><defs><style>.cls-1 { fill: %23ff2741; }</style></defs><g id='_7' data-name='7'><path class='cls-1' d='M152.65,305.3c-8.8,0-15.93-7.13-15.93-15.93v-45.57c0-8.8,7.13-15.93,15.93-15.93s15.93,7.13,15.93,15.93v45.57c0,8.8-7.13,15.93-15.93,15.93Z'/></g><g id='_6' data-name='6'><path class='cls-1' d='M249.33,265.25c-4.08,0-8.15-1.55-11.26-4.67l-32.23-32.23c-6.22-6.22-6.22-16.3,0-22.52s16.3-6.22,22.52,0l32.23,32.23c6.22,6.22,6.22,16.3,0,22.52-3.11,3.11-7.19,4.67-11.26,4.67Z'/></g><g id='_5' data-name='5'><path class='cls-1' d='M289.37,168.58h-45.57c-8.8,0-15.93-7.13-15.93-15.93s7.13-15.93,15.93-15.93h45.57c8.8,0,15.93,7.13,15.93,15.93s-7.13,15.93-15.93,15.93Z'/></g><g id='_4' data-name='4'><path class='cls-1' d='M217.1,104.12c-4.08,0-8.15-1.55-11.26-4.66-6.22-6.22-6.22-16.3,0-22.52l32.23-32.23c6.22-6.22,16.3-6.22,22.52,0,6.22,6.22,6.22,16.3,0,22.52l-32.23,32.23c-3.11,3.11-7.19,4.67-11.26,4.67Z'/></g><g id='_3' data-name='3'><path class='cls-1' d='M152.65,77.43c-8.8,0-15.93-7.13-15.93-15.93V15.93c0-8.8,7.13-15.93,15.93-15.93s15.93,7.13,15.93,15.93v45.57c0,8.8-7.13,15.93-15.93,15.93Z'/></g><g id='_2' data-name='2'><path class='cls-1' d='M88.2,104.12c-4.08,0-8.15-1.55-11.26-4.66l-32.23-32.23c-6.22-6.22-6.22-16.3,0-22.52,6.22-6.22,16.3-6.22,22.52,0l32.23,32.23c6.22,6.22,6.22,16.3,0,22.52-3.11,3.11-7.19,4.67-11.26,4.67Z'/></g><g id='_1' data-name='1'><path class='cls-1' d='M61.5,168.58H15.93c-8.8,0-15.93-7.13-15.93-15.93s7.13-15.93,15.93-15.93h45.57c8.8,0,15.93,7.13,15.93,15.93s-7.13,15.93-15.93,15.93Z'/></g><g id='tongkat'><path class='cls-1' d='M55.97,265.25c-4.08,0-8.15-1.55-11.26-4.67-6.22-6.22-6.22-16.3,0-22.52l96.68-96.68c6.22-6.22,16.3-6.22,22.52,0,6.22,6.22,6.22,16.3,0,22.52l-96.68,96.68c-3.11,3.11-7.19,4.67-11.26,4.67Z'/></g></svg>">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -34,12 +36,17 @@
         
         @keyframes pulse-fast { 0%, 100% { opacity: 1; } 50% { opacity: .4; } }
         .animate-pulse-fast { animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        
+        @keyframes border-glow { 0%, 100% { border-color: var(--g-start); box-shadow: 0 0 12px rgba(238, 65, 75, 0.1); } 50% { border-color: var(--g-end); box-shadow: 0 0 20px rgba(250, 46, 147, 0.25); } }
+        .schedule-highlight { animation: border-glow 2s infinite; background-color: rgba(238, 65, 75, 0.03) !important; }
+        .dark .schedule-highlight { background-color: rgba(238, 65, 75, 0.08) !important; }
     </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100">
     <div id="root"></div>
 
-    <script src="store.js"></script> <script type="text/babel" src="components.js"></script>
+    <script src="store.js"></script>
+    <script type="text/babel" src="components.js"></script>
     <script type="text/babel" src="admin.js"></script>
     <script type="text/babel" src="script.js"></script>
 </body>
