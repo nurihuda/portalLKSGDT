@@ -127,7 +127,7 @@ const App = () => {
         };
     }, [countdownLeftMs]);
 
-    const pad = (num) => String(num).padStart(2, '0');
+    const pad = (n) => String(n).padStart(2, '0');
 
     // Logic Urutan & Filter Pencarian Alfabetis Peserta LKS
     const processedPesertaTable = useMemo(() => {
@@ -207,13 +207,6 @@ const App = () => {
                                     <div className="absolute top-4 left-4 text-[10px] font-black text-[var(--g-start)] dark:text-[var(--g-end)] uppercase tracking-widest flex items-center gap-1">
                                         <span className="w-1.5 h-1.5 rounded-full bg-current animate-ping"></span>Sisa Waktu Sesi Kompetisi
                                     </div>
-                                    
-                                    {/* Action Zoom Monitor Layar */}
-                                    <div className="absolute top-3 right-4 hidden group-hover:flex items-center gap-1.5 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 z-10">
-                                        <button onClick={zoomOut} className="w-6 h-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md flex items-center justify-center">-</button>
-                                        <button onClick={zoomIn} className="w-6 h-6 font-bold hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md flex items-center justify-center">+</button>
-                                        <button onClick={toggleFullScreen} className="w-6 h-6 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md flex items-center justify-center text-xs">FS</button>
-                                    </div>
 
                                     <div style={{ transform: `scale(${timerScale})` }} className="flex items-center gap-4 sm:gap-5 font-mono text-5xl sm:text-6xl font-black text-slate-900 dark:text-white select-none transition-transform duration-200">
                                         <div>{pad(hr)}</div><div className="text-slate-300 dark:text-slate-700 animate-pulse">:</div>
@@ -267,7 +260,7 @@ const App = () => {
                             <div className="max-w-5xl mx-auto bg-gray-900 text-white p-5 rounded-2xl border border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
                                 <div className="text-center sm:text-left">
                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-0.5">Sisa Waktu Sesi Aktif</span>
-                                    <div className="font-mono text-2xl font-black text-red-400">{pad(displayHours)}:{pad(displayMinutes)}:{pad(displaySeconds)}</div>
+                                    <div className="font-mono text-2xl font-black text-red-400">{pad(hr)}:{pad(min)}:{pad(sec)}</div>
                                 </div>
                                 <div className="flex flex-col gap-1 w-full sm:w-auto">
                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider text-center sm:text-left">Interseptor Tambah/Kurang Waktu (Menit):</span>
@@ -279,7 +272,12 @@ const App = () => {
                                     </div>
                                 </div>
                             </div>
-                            <window.AdminPanelComponent db={db} setDb={setDb} setView={setView} modules={modules} setModules={setModules} pesertaList={pesertaList} setPesertaList={setPesertaList} schedule={schedule} setSchedule={setSchedule} />
+                            <window.AdminPanelComponent 
+                                db={db} setDb={setDb} setView={setView} 
+                                modules={modules} setModules={setModules} 
+                                pesertaList={pesertaList} setPesertaList={setPesertaList} 
+                                schedule={schedule} setSchedule={setSchedule} 
+                            />
                         </div>
                     )}
 
